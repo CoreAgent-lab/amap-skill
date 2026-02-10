@@ -28,6 +28,17 @@ Claude Code skill for querying [AMap (高德地图) Web Service API](https://lbs
 - [Bun](https://bun.sh) runtime
 - AMap Web Service API Key — set via `AMAP_MAPS_API_KEY` environment variable
 
+### 申请高德 API Key
+
+1. 访问 [高德开放平台控制台](https://console.amap.com/dev/id) 注册账号
+2. 注册后进入 **应用管理**，点击页面右上角 **创建新应用**
+3. 在「我的应用」中选择需要创建 Key 的应用，点击 **添加 Key**
+4. 表单中的「服务平台」选择 **Web 服务**
+5. 将获取到的 Key 设置为环境变量：
+   ```bash
+   export AMAP_MAPS_API_KEY="your-key-here"
+   ```
+
 ## Installation
 
 Copy `skills/amap/` into your Claude Code skills directory:
