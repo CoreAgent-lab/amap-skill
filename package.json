@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "test": "bun test ./skills/amap/tests/cli.test.ts ./skills/amap/tests/commands.test.ts",
+    "amap:help": "bun skills/amap/scripts/amap.ts --help"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}
