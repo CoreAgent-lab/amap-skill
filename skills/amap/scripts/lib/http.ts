@@ -35,10 +35,28 @@ function buildUrlWithParams(url: string, params: Record<string, string | undefin
   return `${url}?${queryString}`;
 }
 
+function buildSanitizedUrlForLog(urlWithParams: string): string {
+  try {
+    const parsed = new URL(urlWithParams);
+
+    for (const key of parsed.searchParams.keys()) {
+      const normalized = key.toLowerCase();
+      if (normalized === "key" || normalized.includes("token") || normalized.includes("secret")) {
+        parsed.searchParams.set(key, "***");
+      }
+    }
+
+    return parsed.toString();
+  } catch {
+    return "[invalid-url]";
+  }
+}
+
 export async function getJsonWithRetry(request: HttpGetRequest): Promise<unknown> {
   const timeoutMs = request.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   const retries = request.retries ?? DEFAULT_RETRY_COUNT;
   const urlWithParams = buildUrlWithParams(request.url, request.params);
+  const safeUrlForLog = buildSanitizedUrlForLog(urlWithParams);
 
   let lastError: unknown;
 
@@ -66,7 +84,7 @@ export async function getJsonWithRetry(request: HttpGetRequest): Promise<unknown
         }
 
         throw new CliError(
-          `HTTP request failed with status ${response.status} for ${urlWithParams}`,
+          `HTTP request failed with status ${response.status} for ${safeUrlForLog}`,
           ExitCode.NETWORK,
         );
       }
@@ -75,7 +93,7 @@ export async function getJsonWithRetry(request: HttpGetRequest): Promise<unknown
         return await response.json();
       } catch (jsonError) {
         throw new CliError(
-          `Failed to parse JSON response from ${urlWithParams}: ${toErrorMessage(jsonError)}`,
+          `Failed to parse JSON response from ${safeUrlForLog}: ${toErrorMessage(jsonError)}`,
           ExitCode.NETWORK,
           { cause: jsonError },
         );
